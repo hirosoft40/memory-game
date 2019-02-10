@@ -5,10 +5,7 @@ import MemoryCard from "./MemoryCard.js";
 function shuffle(a) {
   for (let i = a.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
-    let x = a[i];
-
-    a[i] = a[j];
-    a[j] = x;
+    [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
 }
@@ -35,13 +32,16 @@ class App extends Component {
   }
 
   pickCard(cardIndex) {
-    let newDeck = this.state.deck.map(card => {
-      // if (cardIndex === index) return cardToFlip;
-      return {...card};
-    });
-    newDeck[cardIndex].isFlipped = true;
-
     let newPickedCards = this.state.pickedCards.concat(cardIndex);
+    if (this.state.deck[cardIndex].isFlipped) return;
+
+    let cardToFlip = { ...this.state.deck[cardIndex] };
+    cardToFlip.isFlipped = true;
+
+    let newDeck = this.state.deck.map((card, index) => {
+      if (cardIndex === index) return cardToFlip;
+      return { ...card };
+    });
 
     if (newPickedCards.length === 2) {
       let card1Index = newPickedCards[0];
